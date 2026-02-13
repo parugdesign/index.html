@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be my Valentine? 💖</title>
+  <style>
+    :root{
+      --bg1:#ffd0e2;
+      --bg2:#ffb3d1;
+      --bg3:#ffe7f2;
+      --card:#ffffffd9;
+      --ink:#111827;
+      --muted:#6b7280;
+      --pink:#ff4d8d;
+      --pink2:#f472b6;
+      --stroke: rgba(255,77,141,.22);
+      --shadow: 0 18px 55px rgba(0,0,0,.16);
+      --r: 24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center; overflow:hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 800px at 10% 10%, var(--bg2), transparent 60%),
+        radial-gradient(1100px 700px at 90% 90%, var(--bg3), transparent 55%),
+        linear-gradient(160deg, var(--bg1), #fff);
+    }
+    .wrap{ width:min(940px, 92vw); }
+    .shell{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius: calc(var(--r) + 8px);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding:18px;
+    }
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:950; letter-spacing:.2px;
+    }
+    .dot{
+      width:12px; height:12px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--pink));
+      box-shadow: 0 12px 22px rgba(255,77,141,.28);
+    }
+    .step{
+      font-size:12px; color:var(--muted); font-weight:800;
+    }
+    .progress{
+      display:flex; gap:6px; align-items:center;
+    }
+    .pill{
+      width:26px; height:8px; border-radius:999px;
+      background: rgba(17,24,39,.12);
+      overflow:hidden; position:relative;
+    }
+    .pill.on::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(90deg, var(--pink), var(--pink2));
+    }
+
+    .stage{
+      border-radius: var(--r);
+      border:1px solid rgba(255,77,141,.20);
+      background: linear-gradient(180deg, #ffffff, #fff6fb);
+      overflow:hidden;
+      position:relative;
+      min-height:520px;
+      padding:18px;
+      display:grid;
+      place-items:center;
+    }
+
+    /* screens */
+    .screen{ width:100%; display:none; animation: pop .22s ease; }
+    .screen.active{ display:block; }
+    @keyframes pop{ from{ transform: scale(.985); opacity:.35 } to{ transform: scale(1); opacity:1 } }
+
+    h1{
+      font-size: clamp(26px, 3.3vw, 40px);
+      margin: 6px 0 8px; text-align:center;
+    }
+    h2{
+      font-size: clamp(18px, 2.2vw, 22px);
+      margin: 0 0 8px; text-align:center;
+    }
+    p{
+      margin:0 0 14px; text-align:center; color:rgba(17,24,39,.86);
+      line-height:1.5;
+    }
+    .muted{ color:var(--muted); font-weight:700; font-size:13px; }
+
+    .row{ display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap; }
+    .btn{
+      border:none; border-radius:999px;
+      padding:13px 18px;
+      font-weight:950; cursor:pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+      font-size:15px;
+    }
+    .btn:active{ transform:scale(.98); }
+    .btn.pink{ background: linear-gradient(180deg, var(--pink2), var(--pink)); color:#fff; }
+    .btn.dark{ background:#111827; color:#fff; }
+    .btn.ghost{
+      background: rgba(17,24,39,.06);
+      color:#111827;
+      border:1px solid rgba(17,24,39,.12);
+      box-shadow:none;
+    }
+
+    /* cover card */
+    .coverCard{
+      width:min(520px, 92vw);
+      margin: 0 auto;
+      border-radius: 22px;
+      border: 1px solid rgba(17,24,39,.10);
+      background: #fff;
+      box-shadow: 0 16px 44px rgba(0,0,0,.12);
+      padding: 18px 16px;
+      display:grid;
+      gap:10px;
+      justify-items:center;
+    }
+    .bear{
+      width:96px; height:96px; border-radius:28px;
+      display:grid; place-items:center;
+      background: linear-gradient(180deg, #fff, #fff1f7);
+      border:1px solid rgba(255,77,141,.18);
+      font-size:56px;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.10));
+      user-select:none;
+    }
+    .titleBig{
+      font-weight:1000;
+      letter-spacing:.3px;
+      text-align:center;
+      font-size: 24px;
+      margin-top:4px;
+    }
+    .subSmall{ font-size:13px; color:var(--muted); font-weight:750; text-align:center; }
+
+    /* modal popup */
+    .overlay{
+      position:fixed; inset:0;
+      display:none; place-items:center;
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(8px);
+      z-index:50;
+      padding:18px;
+    }
+    .overlay.show{ display:grid; }
+    .modal{
+      width:min(560px, 92vw);
+      background:#fff;
+      border-radius: 26px;
+      border:1px solid rgba(255,77,141,.18);
+      box-shadow: var(--shadow);
+      padding:18px;
+      text-align:center;
+    }
+
+    /* comparison */
+    .compare{
+      width:min(820px, 92vw);
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media(max-width:760px){ .compare{ grid-template-columns: 1fr; } }
+    .panel{
+      border-radius: 22px;
+      border:1px solid rgba(17,24,39,.10);
+      background:#fff;
+      box-shadow: 0 16px 44px rgba(0,0,0,.10);
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .panel .badge{
+      position:absolute; top:12px; right:12px;
+      background: rgba(255,77,141,.12);
+      border:1px solid rgba(255,77,141,.22);
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:950; font-size:12px;
+    }
+    .avatar{
+      width:86px; height:86px; border-radius:24px;
+      background: linear-gradient(180deg, #fff, #fff0f7);
+      border:1px solid rgba(17,24,39,.10);
+      display:grid; place-items:center;
+      font-size:44px;
+      margin: 6px auto 10px;
+      user-select:none;
+    }
+    .panel h3{
+      margin:0 0 8px;
+      font-size:18px; text-align:center;
+    }
+    .list{
+      display:grid; gap:8px;
+      margin-top:10px;
+    }
+    .li{
+      display:flex; justify-content:space-between; gap:10px;
+      padding:10px 10px;
+      border-radius: 16px;
+      border:1px solid rgba(17,24,39,.08);
+      background: linear-gradient(180deg, #fff, #fff7fb);
+      font-weight:850;
+      font-size:13px;
+    }
+    .li span:last-child{ color:rgba(17,24,39,.82); }
+
+    /* music */
+    .musicWrap{
+      width:min(860px, 92vw);
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:12px;
+    }
+    @media(max-width:860px){ .musicWrap{ grid-template-columns: 1fr; } }
+    .songs{
+      border-radius: 22px;
+      border:1px solid rgba(17,24,39,.10);
+      background:#fff;
+      box-shadow: 0 16px 44px rgba(0,0,0,.10);
+      padding:14px;
+    }
+    .song{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 10px;
+      border-radius:16px;
+      border:1px solid rgba(17,24,39,.08);
+      background: linear-gradient(180deg, #fff, #fff7fb);
+      margin-bottom:10px;
+    }
+    .song b{ font-size:14px; }
+    .song small{ color:var(--muted); font-weight:750; }
+    .player{
+      border-radius: 22px;
+      border:1px solid rgba(17,24,39,.10);
+      background:#fff;
+      box-shadow: 0 16px 44px rgba(0,0,0,.10);
+      padding:14px;
+      display:grid; gap:10px;
+      align-content:start;
+    }
+    audio{ width:100%; }
+    .now{
+      border-radius:18px;
+      border:1px solid rgba(255,77,141,.20);
+      background: rgba(255,77,141,.08);
+      padding:10px 12px;
+      font-weight:900;
+      text-align:left;
+    }
+
+    /* envelope */
+    .envWrap{ display:grid; place-items:center; gap:10px; }
+    .envelope{
+      width:min(420px, 92vw); height:260px;
+      position:relative;
+      border-radius:22px;
+      background:#fff;
+      border:1px solid rgba(255,77,141,.28);
+      box-shadow: 0 16px 40px rgba(0,0,0,.12);
+      overflow:hidden;
+    }
+    .env-body{ position:absolute; inset:0; background: linear-gradient(180deg, #fff, #fff6fb); }
+    .env-flap{
+      position:absolute; left:0; right:0; top:0; height:60%;
+      background: linear-gradient(180deg, #ffd1e2, #ffb9d3);
+      clip-path: polygon(0 0, 100% 0, 50% 85%);
+      transform-origin: top;
+      transition: transform .35s ease;
+      border-bottom:1px solid rgba(255,77,141,.18);
+    }
+    .letter{
+      position:absolute; left:14px; right:14px; bottom:14px; height:82%;
+      background:white; border-radius:16px;
+      border:1px solid rgba(17,24,39,.12);
+      transform: translateY(58%);
+      transition: transform .45s ease;
+      padding:14px;
+      display:grid; gap:10px;
+    }
+    .letter .tag{ font-weight:1000; text-align:center; }
+    .letter .text{ font-size:14px; line-height:1.55; color:rgba(17,24,39,.86); text-align:left; white-space:pre-wrap; }
+    .seal{
+      position:absolute; left:50%; top:60%;
+      transform: translate(-50%,-50%);
+      width:68px; height:68px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--pink));
+      box-shadow: 0 16px 30px rgba(255,77,141,.25);
+      display:grid; place-items:center; color:#fff; font-size:22px; font-weight:1000;
+      cursor:pointer; user-select:none;
+      transition: transform .15s ease;
+    }
+    .seal:active{ transform: translate(-50%,-50%) scale(.98); }
+    .open .env-flap{ transform: rotateX(175deg); }
+    .open .letter{ transform: translateY(0%); }
+
+    /* memories */
+    .grid{
+      width:min(860px, 92vw);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media(max-width:800px){ .grid{ grid-template-columns: 1fr; } }
+    .mem{
+      border-radius:22px;
+      border:1px solid rgba(17,24,39,.10);
+      background:#fff;
+      box-shadow: 0 16px 44px rgba(0,0,0,.10);
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .mem .img{
+      aspect-ratio: 4/3;
+      background: linear-gradient(180deg, #fff, #fff1f7);
+      display:grid; place-items:center;
+      font-size:34px; font-weight:1000;
+      color: rgba(17,24,39,.72);
+    }
+    .mem .cap{
+      padding:12px;
+      font-weight:900;
+      display:flex; justify-content:space-between; gap:10px;
+      color: rgba(17,24,39,.86);
+    }
+    .mem .cap small{ color:var(--muted); font-weight:800; }
+
+    /* gifts */
+    .gifts{
+      width:min(860px, 92vw);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media(max-width:860px){ .gifts{ grid-template-columns: 1fr; } }
+    .gift{
+      border-radius:22px;
+      border:1px solid rgba(17,24,39,.10);
+      background:#fff;
+      box-shadow: 0 16px 44px rgba(0,0,0,.10);
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .gift .box{
+      width:82px; height:82px; border-radius:24px;
+      display:grid; place-items:center;
+      background: linear-gradient(180deg, #fff, #fff1f7);
+      border:1px solid rgba(255,77,141,.18);
+      font-size:44px;
+      margin: 2px auto 10px;
+      user-select:none;
+    }
+    .gift b{ display:block; text-align:center; }
+    .gift p{ margin:8px 0 0; font-size:13px; color:var(--muted); font-weight:750; }
+
+    /* lightbox */
+    .lightbox{
+      position:fixed; inset:0; display:none; place-items:center;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+      z-index:60;
+      padding:18px;
+    }
+    .lightbox.show{ display:grid; }
+    .lightbox .box{
+      width:min(720px, 92vw);
+      background:#fff;
+      border-radius:26px;
+      border:1px solid rgba(255,77,141,.18);
+      box-shadow: var(--shadow);
+      padding:16px;
+      display:grid; gap:10px;
+    }
+    .bigImg{
+      aspect-ratio: 16/9;
+      border-radius:20px;
+      border:1px solid rgba(17,24,39,.10);
+      background: linear-gradient(180deg, #fff, #fff1f7);
+      display:grid; place-items:center;
+      font-size:40px; font-weight:1000;
+      color: rgba(17,24,39,.72);
+      overflow:hidden;
+    }
+    .bigImg img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .lbTitle{ font-weight:1000; text-align:center; }
+    .lbSub{ font-size:13px; color:var(--muted); font-weight:800; text-align:center; }
+
+    /* floating hearts */
+    .heart{
+      position:fixed; left:0; top:0; pointer-events:none;
+      font-size:18px;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,.08));
+      animation: floatUp linear forwards;
+      will-change: transform, opacity;
+      z-index:1;
+    }
+    @keyframes floatUp{
+      from{ transform: translate(var(--x), calc(100vh + 40px)) scale(var(--s)) rotate(0deg); opacity: 0; }
+      12%{opacity:1;}
+      to{ transform: translate(calc(var(--x) + var(--dx)), -60px) scale(var(--s)) rotate(var(--r)); opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span> Valentine Microsite</div>
+        <div class="progress" id="progress"></div>
+        <div class="step" id="stepText">1 / 7</div>
+      </div>
+
+      <div class="stage">
+        <!-- 1) COVER -->
+        <section class="screen active" data-step="1">
+          <div class="coverCard">
+            <div class="bear" id="bearEmoji">🧸</div>
+            <div class="titleBig" id="coverName">PATOOOTEEE!</div>
+            <div class="subSmall" id="coverLine">Will you be my Valentine? 💘💖</div>
+            <div class="row" style="margin-top:4px;">
+              <button class="btn pink" id="openNoteBtn">Open 💌</button>
+            </div>
+            <div class="muted">Handcrafted • Cute • Dramatic 😌</div>
+          </div>
+        </section>
+
+        <!-- 2) COMPARISON -->
+        <section class="screen" data-step="2">
+          <h1>Why you should choose me 💘</h1>
+          <p class="muted">A fair comparison (not really) 😭</p>
+
+          <div class="compare">
+            <div class="panel">
+              <div class="badge">YOU</div>
+              <div class="avatar" id="youAvatar">😌</div>
+              <h3 id="youName">You</h3>
+              <div class="list" id="youList"></div>
+            </div>
+
+            <div class="panel">
+              <div class="badge">X-CRUSH</div>
+              <div class="avatar" id="exAvatar">🙄</div>
+              <h3 id="exName">X-Crush</h3>
+              <div class="list" id="exList"></div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:16px;">
+            <button class="btn ghost" id="back1">⬅ Back</button>
+            <button class="btn pink" id="toMusic">Next ➜</button>
+          </div>
+        </section>
+
+        <!-- 3) MUSIC -->
+        <section class="screen" data-step="3">
+          <h1>Our love sounds like this 🎶</h1>
+          <p class="muted">Tap a song → play in the mini player</p>
+
+          <div class="musicWrap">
+            <div class="songs" id="songList"></div>
+
+            <div class="player">
+              <div class="now" id="nowPlaying">Now playing: (pick a song) 💞</div>
+              <audio id="audio" controls preload="none"></audio>
+              <div class="muted">
+                If you want Spotify-like, replace songs with your own MP3 links
+                (Drive direct link / CDN).
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:16px;">
+            <button class="btn ghost" id="back2">⬅ Back</button>
+            <button class="btn pink" id="toEnvelope">Next ➜</button>
+          </div>
+        </section>
+
+        <!-- 4) ENVELOPE / LETTER -->
+        <section class="screen" data-step="4">
+          <h1>To the girl I love most 💌</h1>
+          <p class="muted">Tap the seal to open the letter</p>
+
+          <div class="envWrap">
+            <div class="envelope" id="envelope">
+              <div class="env-body"></div>
+              <div class="env-flap"></div>
+
+              <div class="letter">
+                <div class="tag">❤️ My dearest <span id="dearestName">Patootee</span></div>
+                <div class="text" id="letterText"></div>
+                <div class="row">
+                  <button class="btn pink" id="toMemories">Continue ➜</button>
+                </div>
+              </div>
+
+              <div class="seal" id="seal">❤</div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:16px;">
+            <button class="btn ghost" id="back3">⬅ Back</button>
+          </div>
+        </section>
+
+        <!-- 5) MEMORIES -->
+        <section class="screen" data-step="5">
+          <h1>Every moment with you 📸</h1>
+          <p class="muted">Click any card (you can replace with real photos)</p>
+
+          <div class="grid" id="memGrid"></div>
+
+          <div class="row" style="margin-top:16px;">
+            <button class="btn ghost" id="back4">⬅ Back</button>
+            <button class="btn pink" id="toGifts">Next ➜</button>
+          </div>
+        </section>
+
+        <!-- 6) GIFTS -->
+        <section class="screen" data-step="6">
+          <h1>Your Valentine gifts 🎁</h1>
+          <p class="muted">Because you deserve premium treatment 😌</p>
+
+          <div class="gifts" id="giftGrid"></div>
+
+          <div class="row" style="margin-top:16px;">
+            <button class="btn ghost" id="back5">⬅ Back</button>
+            <button class="btn pink" id="toFinal">Final ➜</button>
+          </div>
+        </section>
+
+        <!-- 7) FINAL -->
+        <section class="screen" data-step="7">
+          <h1 id="finalTitle">Will you be my Valentine? 🥺💘</h1>
+          <p class="muted">Click YES to end my suffering 😭</p>
+
+          <div class="row" style="margin-top:8px;">
+            <button class="btn pink" id="yesBtn">YES 💍</button>
+            <button class="btn dark" id="copyBtn">Copy message 🔗</button>
+          </div>
+
+          <p class="muted" id="finalMsg" style="margin-top:10px;"></p>
+
+          <div class="row" style="margin-top:14px;">
+            <button class="btn ghost" id="back6">⬅ Back</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Note popup like in the reel -->
+  <div class="overlay" id="noteOverlay">
+    <div class="modal">
+      <div style="font-size:54px; margin-top:2px;">💌</div>
+      <h2 id="noteTitle">I made this handcrafted with love…</h2>
+      <p id="noteBody" class="muted" style="margin-top:6px;">
+        If you’re reading this, you’re officially special 😭💖
+      </p>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn pink" id="takeMeBtn">Take me there ➜</button>
+        <button class="btn ghost" id="closeNoteBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox for memories -->
+  <div class="lightbox" id="lightbox">
+    <div class="box">
+      <div class="bigImg" id="bigImg">📸</div>
+      <div class="lbTitle" id="lbTitle">Memory</div>
+      <div class="lbSub" id="lbSub">Tap outside to close</div>
+      <div class="row">
+        <button class="btn dark" id="lbClose">Close ✨</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   EDIT THESE VALUES ONLY ✅
+========================= */
+const CONFIG = {
+  coverName: "PATOOOTEEE!",
+  coverLine: "Will you be my Valentine? 💘💖",
+  bearEmoji: "🧸",
+
+  you: {
+    name: "You",
+    emoji: "😌",
+    points: [
+      ["Loyalty", "∞"],
+      ["Cuteness", "100/10"],
+      ["Effort", "Handcrafted website 😭"],
+      ["Vibes", "Elite 💅"],
+      ["Future", "Us. Together. 😌💞"]
+    ]
+  },
+
+  ex: {
+    name: "X-Crush",
+    emoji: "🙄",
+    points: [
+      ["Loyalty", "??"],
+      ["Cuteness", "2/10"],
+      ["Effort", "Seen ✅ no reply"],
+      ["Vibes", "Dry 😤"],
+      ["Future", "Blocked (maybe)"]
+    ]
+  },
+
+  songs: [
+    // Put your OWN MP3 links here for real playback.
+    // Demo uses public domain sample links (may not always work depending on hosting).
+    { title: "Our Song", artist: "Your Choice", url: "" },
+    { title: "Late Night Vibes", artist: "Your Choice", url: "" },
+    { title: "Cute Mood", artist: "Your Choice", url: "" },
+  ],
+
+  letter: `I don’t know how to say this normally…
+so I made a whole website 😭
+
+I love the way you exist.
+I love your smile.
+I love your energy.
+
+So… if you say YES,
+I promise I’ll keep choosing you every day 💞`,
+
+  memories: [
+    // Replace imageUrl with your own image links later (optional)
+    { title: "Our first meet", subtitle: "💖", imageUrl: "" },
+    { title: "That one laugh", subtitle: "😂", imageUrl: "" },
+    { title: "Best day ever", subtitle: "✨", imageUrl: "" },
+    { title: "Random cute moment", subtitle: "🥺", imageUrl: "" },
+    { title: "My favorite memory", subtitle: "📸", imageUrl: "" },
+    { title: "More coming soon", subtitle: "🔒", imageUrl: "" },
+  ],
+
+  gifts: [
+    { icon:"🍫", title:"Chocolate", note:"Sweet like you. (And yes, extra.)" },
+    { icon:"🌹", title:"Roses", note:"Because classic romance never dies." },
+    { icon:"🧸", title:"Teddy", note:"So you can hug it when I’m not there 😭" },
+  ],
+
+  finalTitle: "Will you be my Valentine? 🥺💘",
+  successMessage: "YAYYY 😭💖 We’re locked in. Date loading…",
+};
+/* ========================= */
+
+const screens = [...document.querySelectorAll(".screen")];
+const stepText = document.getElementById("stepText");
+const progress = document.getElementById("progress");
+
+// progress pills
+const totalSteps = screens.length;
+for(let i=0;i<totalSteps;i++){
+  const p = document.createElement("div");
+  p.className = "pill";
+  progress.appendChild(p);
+}
+const pills = [...document.querySelectorAll(".pill")];
+
+let step = 1;
+function setStep(n){
+  step = n;
+  screens.forEach(s => s.classList.toggle("active", Number(s.dataset.step) === step));
+  stepText.textContent = `${step} / ${totalSteps}`;
+  pills.forEach((p, i) => p.classList.toggle("on", i < step));
+  spawnHearts(6);
+}
+
+// floating hearts
+function rint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function spawnHearts(count=12){
+  for(let i=0;i<count;i++){
+    const h = document.createElement("div");
+    h.className="heart";
+    h.textContent = Math.random()>0.5 ? "💖" : (Math.random()>0.5 ? "💘" : "💗");
+    const x=rint(0, innerWidth);
+    h.style.setProperty("--x", x+"px");
+    h.style.setProperty("--dx", rint(-140,140)+"px");
+    h.style.setProperty("--s", (Math.random()*0.9+0.55).toFixed(2));
+    h.style.setProperty("--r", rint(-180,180)+"deg");
+    h.style.animationDuration = (Math.random()*1.2+1.4).toFixed(2)+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(), 2600);
+  }
+}
+
+// fill cover
+document.getElementById("coverName").textContent = CONFIG.coverName;
+document.getElementById("coverLine").textContent = CONFIG.coverLine;
+document.getElementById("bearEmoji").textContent = CONFIG.bearEmoji;
+
+// fill comparison
+document.getElementById("youName").textContent = CONFIG.you.name;
+document.getElementById("youAvatar").textContent = CONFIG.you.emoji;
+document.getElementById("exName").textContent = CONFIG.ex.name;
+document.getElementById("exAvatar").textContent = CONFIG.ex.emoji;
+
+function fillList(el, points){
+  el.innerHTML="";
+  points.forEach(([k,v])=>{
+    const div=document.createElement("div");
+    div.className="li";
+    div.innerHTML=`<span>${k}</span><span>${v}</span>`;
+    el.appendChild(div);
+  });
+}
+fillList(document.getElementById("youList"), CONFIG.you.points);
+fillList(document.getElementById("exList"), CONFIG.ex.points);
+
+// songs
+const songList = document.getElementById("songList");
+const audio = document.getElementById("audio");
+const nowPlaying = document.getElementById("nowPlaying");
+
+songList.innerHTML = `
+  <div style="font-weight:1000; margin:2px 0 12px; text-align:left;">
+    Pick a track 💞 <span class="muted" style="font-weight:800;">(add your mp3 links in CONFIG)</span>
+  </div>
+`;
+
+CONFIG.songs.forEach((s, idx)=>{
+  const row=document.createElement("div");
+  row.className="song";
+  row.innerHTML = `
+    <div style="text-align:left;">
+      <b>${s.title}</b><br/>
+      <small>${s.artist}</small>
+    </div>
+    <button class="btn ghost" style="padding:10px 14px; font-size:13px;">Play ▶</button>
+  `;
+  row.querySelector("button").addEventListener("click", ()=>{
+    if(!s.url){
+      nowPlaying.textContent = "Add an MP3 URL in CONFIG.songs to enable playback 🎵";
+      spawnHearts(8);
+      return;
+    }
+    audio.src = s.url;
+    audio.play().catch(()=>{});
+    nowPlaying.textContent = `Now playing: ${s.title} — ${s.artist} 💞`;
+    spawnHearts(14);
+  });
+  songList.appendChild(row);
+});
+
+// letter/envelope
+document.getElementById("letterText").textContent = CONFIG.letter;
+document.getElementById("dearestName").textContent = (CONFIG.coverName || "Patootee").replace(/!+$/,"");
+
+const envelope = document.getElementById("envelope");
+document.getElementById("seal").addEventListener("click", ()=>{
+  envelope.classList.toggle("open");
+  spawnHearts(22);
+});
+
+// memories grid
+const memGrid = document.getElementById("memGrid");
+memGrid.innerHTML = "";
+CONFIG.memories.forEach((m, i)=>{
+  const card = document.createElement("div");
+  card.className="mem";
+  const img = document.createElement("div");
+  img.className="img";
+  if(m.imageUrl){
+    img.innerHTML = `<img alt="" src="${m.imageUrl}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+  } else {
+    img.textContent = "📸";
+  }
+  const cap = document.createElement("div");
+  cap.className="cap";
+  cap.innerHTML = `<span>${m.title}</span><small>${m.subtitle || ""}</small>`;
+  card.appendChild(img);
+  card.appendChild(cap);
+  card.addEventListener("click", ()=>openLightbox(m));
+  memGrid.appendChild(card);
+});
+
+// gifts
+const giftGrid = document.getElementById("giftGrid");
+giftGrid.innerHTML="";
+CONFIG.gifts.forEach(g=>{
+  const div=document.createElement("div");
+  div.className="gift";
+  div.innerHTML = `
+    <div class="box">${g.icon}</div>
+    <b>${g.title}</b>
+    <p>${g.note}</p>
+  `;
+  giftGrid.appendChild(div);
+});
+
+// final
+document.getElementById("finalTitle").textContent = CONFIG.finalTitle;
+
+// lightbox
+const lightbox = document.getElementById("lightbox");
+const bigImg = document.getElementById("bigImg");
+const lbTitle = document.getElementById("lbTitle");
+
+function openLightbox(m){
+  lbTitle.textContent = m.title;
+  if(m.imageUrl){
+    bigImg.innerHTML = `<img alt="" src="${m.imageUrl}">`;
+  }else{
+    bigImg.textContent = "📸";
+  }
+  lightbox.classList.add("show");
+  spawnHearts(10);
+}
+document.getElementById("lbClose").addEventListener("click", ()=>lightbox.classList.remove("show"));
+lightbox.addEventListener("click", (e)=>{ if(e.target===lightbox) lightbox.classList.remove("show"); });
+
+// note overlay (Step 1 popup like the reel)
+const noteOverlay = document.getElementById("noteOverlay");
+document.getElementById("openNoteBtn").addEventListener("click", ()=>{
+  noteOverlay.classList.add("show");
+  spawnHearts(18);
+});
+document.getElementById("closeNoteBtn").addEventListener("click", ()=>noteOverlay.classList.remove("show"));
+document.getElementById("takeMeBtn").addEventListener("click", ()=>{
+  noteOverlay.classList.remove("show");
+  setStep(2);
+});
+
+// nav buttons
+document.getElementById("back1").onclick=()=>setStep(1);
+document.getElementById("toMusic").onclick=()=>setStep(3);
+document.getElementById("back2").onclick=()=>setStep(2);
+document.getElementById("toEnvelope").onclick=()=>setStep(4);
+document.getElementById("back3").onclick=()=>setStep(3);
+document.getElementById("toMemories").onclick=()=>setStep(5);
+document.getElementById("back4").onclick=()=>setStep(4);
+document.getElementById("toGifts").onclick=()=>setStep(6);
+document.getElementById("back5").onclick=()=>setStep(5);
+document.getElementById("toFinal").onclick=()=>setStep(7);
+document.getElementById("back6").onclick=()=>setStep(6);
+
+// yes + copy
+const finalMsg = document.getElementById("finalMsg");
+document.getElementById("yesBtn").addEventListener("click", ()=>{
+  finalMsg.textContent = CONFIG.successMessage;
+  spawnHearts(40);
+});
+
+document.getElementById("copyBtn").addEventListener("click", async ()=>{
+  const msg = `${CONFIG.coverName} 💖\nI said YES 😭\n${CONFIG.successMessage}\n(put your hosted link here)`;
+  try{
+    await navigator.clipboard.writeText(msg);
+    finalMsg.textContent = "Copied ✅ paste to WhatsApp/Instagram DM 😌";
+  }catch{
+    alert("Copy failed. Copy manually:\n\n"+msg);
+  }
+});
+
+// start
+setStep(1);
+setInterval(()=>{ if(step!==7) spawnHearts(3); }, 950);
+</script>
+</body>
+</html>
