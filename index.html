@@ -619,23 +619,23 @@ const CONFIG = {
   },
 
   ex: {
-    name: "X-Crush",
-    emoji: "🙄",
+    name: "Since you asked for it💖",
+    emoji: "",
     points: [
-      ["Loyalty", "??"],
-      ["Cuteness", "2/10"],
-      ["Effort", "Seen ✅ no reply"],
-      ["Vibes", "Dry 😤"],
-      ["Future", "Blocked (maybe)"]
+      ["I love how comfortable silence feels with you", "!!"],
+      ["I love that you make us want to build something real.", "."],
+      ["The thought of losing you would hurt", "😭"],
+      ["You are my basic necessity for living", "Which means my day doesn't run without you"],
+      ["Distance made us even more stronger", "You mean the world"]
     ]
   },
 
   songs: [
     // Put your OWN MP3 links here for real playback.
     // Demo uses public domain sample links (may not always work depending on hosting).
-    { title: "Our Song", artist: "Your Choice", url: "" },
-    { title: "Late Night Vibes", artist: "Your Choice", url: "" },
-    { title: "Cute Mood", artist: "Your Choice", url: "" },
+    { title: "Our Song", artist: "Our Choice", url: "https://gaana.com/song/mogathirai-10" },
+    { title: "Our Peace", artist: "Your Choice", url: "https://gaana.com/song/unna-vida" },
+    { title: "Our Mood", artist: "Your Choice", url: "https://gaana.com/song/sweat-363" },
   ],
 
   letter: `I don’t know how to say this normally…
@@ -646,7 +646,7 @@ I love your smile.
 I love your energy.
 
 So… if you say YES,
-I promise I’ll keep choosing you every day 💞`,
+I promise I’ll keep choosing you forever💞`,
 
   memories: [
     // Replace imageUrl with your own image links later (optional)
@@ -755,7 +755,7 @@ CONFIG.songs.forEach((s, idx)=>{
   `;
   row.querySelector("button").addEventListener("click", ()=>{
     if(!s.url){
-      nowPlaying.textContent = "Add an MP3 URL in CONFIG.songs to enable playback 🎵";
+      nowPlaying.textContent = "https://gaana.com/song/sweat-363 🎵";
       spawnHearts(8);
       return;
     }
